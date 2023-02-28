@@ -1,0 +1,31 @@
+name: Сборка и развертывание приложения .NET Core в веб-приложение ITForum20220906162428
+on:
+  push:
+    branches:
+    - master
+    - developing
+  pull_request:
+    branches:
+    - master
+    - developing
+env:
+  AZURE_WEBAPP_NAME: ITForum20220906162428
+  AZURE_WEBAPP_PACKAGE_PATH: ITForum/published
+  CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 6.0.x
+  WORKING_DIRECTORY: ITForum
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
+    - name: Restore
+      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
+    - name: Build
+      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+    - name: Test
+      run: dotnet test .
